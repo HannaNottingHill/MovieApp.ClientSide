@@ -38,7 +38,7 @@ export const MainView = () => {
         />
         <h2>Similar Movies: </h2>
         <div>
-          {similarMovies.map((movies) => (
+          {similarMovies.map((movie) => (
             <MovieCard
               key={movie.id}
               movie={movie}
