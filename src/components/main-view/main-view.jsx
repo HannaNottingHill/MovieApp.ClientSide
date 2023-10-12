@@ -5,7 +5,6 @@ import { MovieView } from "../movie-view/movie-view";
 
 export const MainView = () => {
   const [movies, setMovies] = useState([]);
-
   const [selectedMovie, setSelectedMovie] = useState(null);
 
   useEffect(() => {
@@ -18,6 +17,7 @@ export const MainView = () => {
             title: doc.title,
             image: doc.image,
             director: doc.director,
+            genre: doc.genre,
           };
         });
         setMovies(movieFromApi);
@@ -25,11 +25,28 @@ export const MainView = () => {
   }, []);
 
   if (selectedMovie) {
+    const similarMovies = movies.filter(
+      (movie) =>
+        movie.genre === selectedMovie.genre && movie.id !== selectedMovie.id
+    );
+
     return (
-      <MovieView
-        movie={selectedMovie}
-        onBackClick={() => setSelectedMovie(null)}
-      />
+      <div>
+        <MovieView
+          movie={selectedMovie}
+          onBackClick={() => setSelectedMovie(null)}
+        />
+        <h2>Similar Movies: </h2>
+        <div>
+          {similarMovies.map((movies) => (
+            <MovieCard
+              key={movie.id}
+              movie={movie}
+              onClick={() => setSelectedMovie(movie)}
+            />
+          ))}
+        </div>
+      </div>
     );
   }
 
