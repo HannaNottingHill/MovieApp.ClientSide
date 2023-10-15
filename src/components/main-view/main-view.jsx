@@ -2,27 +2,46 @@ import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { MovieCard } from "../movie-card/movie-card";
 import { MovieView } from "../movie-view/movie-view";
+import { LoginView } from "../login-view/login-view";
+import { response } from "express";
+import { SignupView } from "../signup-view/signup-view";
 
 export const MainView = () => {
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const storedToken = localStorage.getItem("token");
+  const [user, setUser] = useState(storedUser ? storedUser : null);
+  const [token, setToken] = useState(storedToken ? storedToken : null);
   const [movies, setMovies] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:8080/movies")
+    if (!token) {
+      return;
+    }
+
+    fetch("http://localhost:8080/movies", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
       .then((response) => response.json())
-      .then((data) => {
-        const movieFromApi = data.docs.map((doc) => {
-          return {
-            id: doc.key,
-            title: doc.title,
-            image: doc.image,
-            director: doc.director,
-            genre: doc.genre,
-          };
-        });
-        setMovies(movieFromApi);
+      .then((movies) => {
+        console.log(movies);
       });
-  }, []);
+  }, [token]);
+
+  if (!user) {
+    return (
+      <>
+        <LoginView
+          onLoggedIn={(user, token) => {
+            setUser(user);
+            setToken(token);
+          }}
+        />
+        or
+        <SignupView />
+      </>
+    );
+  }
 
   if (selectedMovie) {
     const similarMovies = movies.filter(
@@ -45,6 +64,16 @@ export const MainView = () => {
               onClick={() => setSelectedMovie(movie)}
             />
           ))}
+        </div>
+        <div>
+          <button
+            onClick={() => {
+              setUser(null);
+              setToken(null);
+            }}
+          >
+            Logout
+          </button>
         </div>
       </div>
     );
