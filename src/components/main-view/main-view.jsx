@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 import { MovieCard } from "../movie-card/movie-card";
 import { MovieView } from "../movie-view/movie-view";
 import { LoginView } from "../login-view/login-view";
-import { response } from "express";
 import { SignupView } from "../signup-view/signup-view";
+import Row from "react-bootstrap/Row";
 
 export const MainView = () => {
   const storedUser = JSON.parse(localStorage.getItem("user"));
